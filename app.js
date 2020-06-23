@@ -1,6 +1,6 @@
 const express = require("express");
 const boxSDK = require("box-node-sdk");
-const config = require("./adobe-sign-open-with_config.json");
+const config = require("./config");
 
 const app = express();
 
