@@ -1,38 +1,30 @@
 const boxSDK = require("box-node-sdk");
-const config = require("./adobe-sign-open-with_config.json");
+const config = require("./config");
 const axios = require("axios");
 const fs = require("fs");
 
-/**
- * app.jsで利用する、AppUserと、サンプルのWordファイルを予め登録する。
- * また、OpenWithを利用するために必要な、統合の設定も行う。
- */
 const main = async () => {
   try {
-    // 作成済みのJWT認証用のConfigファイルを読み込む
     const sdk = await boxSDK.getPreconfiguredInstance(config);
-    // ServiceAccountのClientオブジェクトを作成
     const saClient = sdk.getAppAuthClient("enterprise");
 
-    // app userを作成 (OpenWithはServiceAccountではつかえず、AppUserが必要なため)
+    // create app user
     let appUser = await saClient.enterprise.addAppUser(
       "Adobe Sign Sample App User"
     );
-
     console.log(`const USER_ID = "${appUser.id}"`);
 
-    // app userのホームフォルダに、サンプルとしてSample.docをアップロードする
+    // upload sample docx file
     saClient.asUser(appUser.id);
     const stream = fs.createReadStream("./Sample.docx");
     const files = await saClient.files.uploadFile("0", "Sample.docx", stream);
     const file = files.entries[0];
     saClient.asSelf();
-
     console.log(`const FILE_ID = "${file.id}"`);
-    // 念の為、現在利用可能なWebApp統合を一覧する
-    // 13418が入っていないなら、設定がまちがっている
+
+    // check available integrations
     const appIntegs = await saClient.get("/app_integrations");
-    console.log("利用可能なWebApp統合一覧", appIntegs.body);
+    console.log(appIntegs.body);
     /*
         {
           next_marker: null,
@@ -46,9 +38,6 @@ const main = async () => {
         };
         */
 
-    // 作成したAppUserに、BoxEditのアプリ統合を利用できるようにする。
-    // clientオブジェクトから何故かpostの実行（client.post）がうまく機能しなかったので、axiosで実行する
-    // Authorizationにつけるアクセストークンは、ServiceAccountのものを利用する必要がある。
     const saTokenInfo = await sdk.getEnterpriseAppAuthTokens();
     const saAxios = axios.create({
       baseURL: "https://api.box.com/2.0",
@@ -57,9 +46,10 @@ const main = async () => {
       },
     });
 
+    // enable all the integrations for the created app user
     for (const e of appIntegs.body.entries) {
-      const integ = await saClient.get(`/app_integrations/${e.id}`);
-      console.log(integ.body);
+      // const integ = await saClient.get(`/app_integrations/${e.id}`);
+      // console.log(integ.body);
 
       await saAxios.post("/app_integration_assignments", {
         assignee: {
@@ -72,13 +62,6 @@ const main = async () => {
         },
       });
     }
-
-    // 以下のAppUserとFileのIDをapp.jsで利用する
-    console.log(
-      "==================== 以下のIDをメモして、app.jsで利用する ===================="
-    );
-    console.log(`const USER_ID = "${appUser.id}"`);
-    console.log(`const FILE_ID = "${file.id}"`);
   } catch (e) {
     console.error(e.toString());
   }
