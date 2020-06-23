@@ -27,7 +27,12 @@ app.get("/", async (req, res) => {
     // APIリファレンスには載っていないが、UI Elementsの説明には書いてあるAPI
     // ここでは、OpenWithで必要なものと、Previewで必要なものを両方スコープにいれてトークンをダウンスコープする
     const downToken = await auClient.exchangeToken(
-      ["item_execute_integration", "item_readwrite", "item_preview"],
+      [
+        "item_execute_integration",
+        "item_readwrite",
+        "item_preview",
+        "root_readwrite",
+      ],
       `https://api.box.com/2.0/files/${FILE_ID}`
     );
 
