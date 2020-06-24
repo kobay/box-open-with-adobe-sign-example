@@ -8,11 +8,8 @@ app.set("views", ".");
 app.set("view engine", "ejs");
 
 // setup 1
-// const USER_ID = "13094945658";
-// const FILE_ID = "682313483796";
-
-const USER_ID = "13101770376";
-const FILE_ID = "682608437576";
+const USER_ID = "13094945658";
+const FILE_ID = "682313483796";
 
 app.get("/", async (req, res) => {
   try {
@@ -21,21 +18,24 @@ app.get("/", async (req, res) => {
       return;
     }
     const sdk = await boxSDK.getPreconfiguredInstance(config);
-    const auClient = await sdk.getAppAuthClient("user", USER_ID);
+    // const auClient = await sdk.getAppAuthClient("user", USER_ID);
 
-    const downToken = await auClient.exchangeToken(
-      [
-        "item_execute_integration",
-        "item_readwrite",
-        "item_preview",
-        "root_readwrite",
-      ],
-      `https://api.box.com/2.0/files/${FILE_ID}`
-    );
+    const userToken = await sdk.getAppUserTokens(USER_ID);
+
+    // const downToken = await auClient.exchangeToken(
+    //   [
+    //     "item_execute_integration",
+    //     "item_readwrite",
+    //     "item_preview",
+    //     "root_readwrite",
+    //   ],
+    //   `https://api.box.com/2.0/files/${FILE_ID}`
+    // );
 
     res.render("index", {
       fileId: FILE_ID,
-      token: downToken.accessToken,
+      // token: downToken.accessToken,
+      token: userToken.accessToken,
     });
   } catch (e) {
     console.error(e.toString());
