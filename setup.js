@@ -26,7 +26,7 @@ const main = async () => {
 
     // check available integrations
     const appIntegs = await saClient.get("/app_integrations");
-    console.log(appIntegs.body);
+    // console.log(appIntegs.body);
     /*
         {
           next_marker: null,
