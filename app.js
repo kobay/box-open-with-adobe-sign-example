@@ -7,9 +7,10 @@ const app = express();
 app.set("views", ".");
 app.set("view engine", "ejs");
 
-// setup 1
-const USER_ID = "13094945658";
-const FILE_ID = "682313483796";
+// const USER_ID = "<USER ID>";
+// const FILE_ID = "<FILE ID>";
+const USER_ID = "13121651549";
+const FILE_ID = "683523971229";
 
 app.get("/", async (req, res) => {
   try {
@@ -18,6 +19,7 @@ app.get("/", async (req, res) => {
     // use bare token
     const userToken = await sdk.getAppUserTokens(USER_ID);
 
+    // down scope doesn't work well with Adobe Sign
     // const auClient = await sdk.getAppAuthClient("user", USER_ID);
     // const downToken = await auClient.exchangeToken(
     //   [
@@ -31,7 +33,6 @@ app.get("/", async (req, res) => {
 
     res.render("index", {
       fileId: FILE_ID,
-      // token: downToken.accessToken,
       token: userToken.accessToken,
     });
   } catch (e) {
