@@ -1,4 +1,5 @@
 /node_modules
 .env
-adobe-sign-open-with_config.json
 getTokens.js
+config.json
+

@@ -1,5 +1,5 @@
 const boxSDK = require("box-node-sdk");
-const config = require("./config");
+const config = require("./config.json");
 const axios = require("axios");
 const fs = require("fs");
 
@@ -12,7 +12,6 @@ const main = async () => {
     let appUser = await saClient.enterprise.addAppUser(
       "Adobe Sign Sample App User"
     );
-    console.log(`const USER_ID = "${appUser.id}"`);
 
     // upload sample docx file
     saClient.asUser(appUser.id);
@@ -20,6 +19,9 @@ const main = async () => {
     const files = await saClient.files.uploadFile("0", "Sample.docx", stream);
     const file = files.entries[0];
     saClient.asSelf();
+
+    console.log("copy the following, paste in app.jp ");
+    console.log(`const USER_ID = "${appUser.id}"`);
     console.log(`const FILE_ID = "${file.id}"`);
 
     // check available integrations
@@ -31,7 +33,7 @@ const main = async () => {
           entries: [
             { type: "app_integration", id: "10897" }, <= Edit with G Suite
             { type: "app_integration", id: "1338" }, <= Edit with desktop apps
-            { type: "app_integration", id: "13418" },  <= Edit with desktop apps (SFC) Box Editの統合
+            { type: "app_integration", id: "13418" },  <= Edit with desktop apps (SFC)
             { type: "app_integration", id: "3282" }, <= Sign with Adobe Sign
           ],
           limit: 100,
@@ -48,9 +50,6 @@ const main = async () => {
 
     // enable all the integrations for the created app user
     for (const e of appIntegs.body.entries) {
-      // const integ = await saClient.get(`/app_integrations/${e.id}`);
-      // console.log(integ.body);
-
       await saAxios.post("/app_integration_assignments", {
         assignee: {
           type: "user",

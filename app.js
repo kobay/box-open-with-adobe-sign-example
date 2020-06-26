@@ -1,6 +1,6 @@
 const express = require("express");
 const boxSDK = require("box-node-sdk");
-const config = require("./config");
+const config = require("./config.json");
 
 const app = express();
 
