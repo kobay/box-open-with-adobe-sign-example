@@ -7,10 +7,8 @@ const app = express();
 app.set("views", ".");
 app.set("view engine", "ejs");
 
-// const USER_ID = "<USER ID>";
-// const FILE_ID = "<FILE ID>";
-const USER_ID = "13121651549";
-const FILE_ID = "683523971229";
+const USER_ID = "<SET USER ID>";
+const FILE_ID = "<SET FILE ID>";
 
 app.get("/", async (req, res) => {
   try {
