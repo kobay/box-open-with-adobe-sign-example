@@ -13,15 +13,12 @@ const FILE_ID = "682313483796";
 
 app.get("/", async (req, res) => {
   try {
-    if (!USER_ID || !FILE_ID) {
-      res.send("set USER_ID and FILE_ID");
-      return;
-    }
     const sdk = await boxSDK.getPreconfiguredInstance(config);
-    // const auClient = await sdk.getAppAuthClient("user", USER_ID);
 
+    // use bare token
     const userToken = await sdk.getAppUserTokens(USER_ID);
 
+    // const auClient = await sdk.getAppAuthClient("user", USER_ID);
     // const downToken = await auClient.exchangeToken(
     //   [
     //     "item_execute_integration",
